@@ -18,6 +18,9 @@ WORKDIR /app
 COPY --from=build /out /app
 # Tambal paket OS di stage runtime (hanya stage ini yang dikirim & dipindai Trivy).
 # Terukur: tanpa ini, apt bawaan punya CVE-2026-109518 HIGH (2.4.14 -> 2.4.15ubuntu0.1).
+# Cache-bust dari pipeline: nilai ARG ini berubah tiap build, jadi cache
+# layer apt batal dan apt-get upgrade benar-benar dijalankan ulang.
+ARG AUTORE_APT_REFRESH=0
 RUN apt-get update \
     && apt-get -y upgrade \
     && rm -rf /var/lib/apt/lists/*
